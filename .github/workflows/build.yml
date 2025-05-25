@@ -1,0 +1,24 @@
+name: Build minimal OpenWrt for WNDR4300
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Download ImageBuilder
+        run: |
+          wget https://downloads.openwrt.org/releases/19.07.9/targets/ath79/generic/openwrt-imagebuilder-19.07.9-ath79-generic.Linux-x86_64.tar.xz
+          tar -xJf openwrt-imagebuilder-*.tar.xz
+      - name: Build firmware
+        run: |
+          cd openwrt-imagebuilder-19.07.9-ath79-generic.Linux-x86_64
+          make image PROFILE=WNDR4300 PACKAGES="kmod-tun tailscale"
+      - name: Upload firmware
+        uses: actions/upload-artifact@v3
+        with:
+          name: factory-bin
+          path: bin/targets/ath79/generic/*.factory.bin
