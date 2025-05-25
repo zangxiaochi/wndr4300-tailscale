@@ -11,21 +11,23 @@ jobs:
       # 1) 检出代码仓库
       - uses: actions/checkout@v3
 
-      # 2) 下载并解压 ImageBuilder
+      # 2) 下载并解压 ImageBuilder（注意：23.05.3 / ath79/nand）
       - name: Download ImageBuilder
         run: |
-          wget https://downloads.openwrt.org/releases/19.07.9/targets/ath79/nand/openwrt-imagebuilder-19.07.9-ath79-nand.Linux-x86_64.tar.xz
+          wget https://downloads.openwrt.org/releases/23.05.3/targets/ath79/nand/openwrt-imagebuilder-23.05.3-ath79-nand.Linux-x86_64.tar.xz
           tar -xJf openwrt-imagebuilder-*.tar.xz
 
-      # 3) 编译固件（只包含 kmod-tun 和 tailscale）
+      # 3) 构建固件
       - name: Build firmware
         run: |
-          cd openwrt-imagebuilder-19.07.9-ath79-nand.Linux-x86_64
+          cd openwrt-imagebuilder-23.05.3-ath79-nand.Linux-x86_64
           make image PROFILE=WNDR4300 PACKAGES="kmod-tun tailscale"
 
-      # 4) 上传生成的 factory 镜像
+      # 4) 上传 factory.bin / factory.img
       - name: Upload firmware artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: wndr4300-factory
-          path: openwrt-imagebuilder-*/bin/targets/ath79/nand/*factory*
+          path: |
+            openwrt-imagebuilder-*/bin/targets/ath79/nand/*factory.bin
+            openwrt-imagebuilder-*/bin/targets/ath79/nand/*factory.img
