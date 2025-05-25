@@ -1,4 +1,4 @@
-name: Build minimal OpenWrt for WNDR4300
+name: Build minimal OpenWrt 19.07 for WNDR4300
 
 on:
   push:
@@ -8,22 +8,22 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      # 1) 检出代码仓库
+      # 1) 检出本库代码
       - uses: actions/checkout@v3
 
-      # 2) 下载并解压 ImageBuilder（注意：23.05.3 / ath79/nand）
+      # 2) 下载并解压 19.07.9 ath79/nand ImageBuilder
       - name: Download ImageBuilder
         run: |
-          wget https://downloads.openwrt.org/releases/23.05.3/targets/ath79/nand/openwrt-imagebuilder-23.05.3-ath79-nand.Linux-x86_64.tar.xz
-          tar -xJf openwrt-imagebuilder-*.tar.xz
+          wget https://downloads.openwrt.org/releases/19.07.9/targets/ath79/nand/openwrt-imagebuilder-19.07.9-ath79-nand.Linux-x86_64.tar.xz
+          tar -xJf openwrt-imagebuilder-19.07.9-ath79-nand.Linux-x86_64.tar.xz
 
-      # 3) 构建固件
+      # 3) 构建只包含 kmod-tun 和 tailscale 的固件
       - name: Build firmware
         run: |
-          cd openwrt-imagebuilder-23.05.3-ath79-nand.Linux-x86_64
+          cd openwrt-imagebuilder-19.07.9-ath79-nand.Linux-x86_64
           make image PROFILE=WNDR4300 PACKAGES="kmod-tun tailscale"
 
-      # 4) 上传 factory.bin / factory.img
+      # 4) 上传 factory.bin / factory.img 产物
       - name: Upload firmware artifact
         uses: actions/upload-artifact@v3
         with:
